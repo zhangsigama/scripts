@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理系统 - Book Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .search-section {
+            margin-bottom: 25px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .books-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .books-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .book-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+
+        .book-info {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        .book-info strong {
+            color: #667eea;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .book-description {
+            margin: 15px 0;
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .book-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-borrowed {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .book-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            animation: slideInRight 0.3s ease-out;
+            display: none;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .notification.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .notification.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 图书管理系统</h1>
+            <p>Book Management System</p>
+        </div>
+
+        <div class="content">
+            <!-- Statistics Section -->
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>总藏书量</h3>
+                    <div class="number" id="totalBooks">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>可借阅</h3>
+                    <div class="number" id="availableBooks">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>已借出</h3>
+                    <div class="number" id="borrowedBooks">0</div>
+                </div>
+            </div>
+
+            <!-- Add/Edit Book Form -->
+            <div class="form-section">
+                <h2 id="formTitle">📖 添加新书</h2>
+                <form id="bookForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="bookTitle">书名 *</label>
+                            <input type="text" id="bookTitle" name="title" required placeholder="请输入书名">
+                        </div>
+                        <div class="form-group">
+                            <label for="bookAuthor">作者 *</label>
+                            <input type="text" id="bookAuthor" name="author" required placeholder="请输入作者">
+                        </div>
+                        <div class="form-group">
+                            <label for="bookISBN">ISBN</label>
+                            <input type="text" id="bookISBN" name="isbn" placeholder="请输入ISBN">
+                        </div>
+                        <div class="form-group">
+                            <label for="bookCategory">分类 *</label>
+                            <select id="bookCategory" name="category" required>
+                                <option value="">请选择分类</option>
+                                <option value="小说">小说</option>
+                                <option value="技术">技术</option>
+                                <option value="历史">历史</option>
+                                <option value="科学">科学</option>
+                                <option value="艺术">艺术</option>
+                                <option value="教育">教育</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookPublisher">出版社</label>
+                            <input type="text" id="bookPublisher" name="publisher" placeholder="请输入出版社">
+                        </div>
+                        <div class="form-group">
+                            <label for="bookYear">出版年份</label>
+                            <input type="number" id="bookYear" name="year" placeholder="例如: 2024" min="1000" max="2100">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookDescription">图书简介</label>
+                        <textarea id="bookDescription" name="description" placeholder="请输入图书简介"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookStatus">状态</label>
+                        <select id="bookStatus" name="status">
+                            <option value="available">可借阅</option>
+                            <option value="borrowed">已借出</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            ✓ 添加图书
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;">
+                            ✕ 取消编辑
+                        </button>
+                        <button type="button" class="btn btn-warning" id="clearBtn">
+                            ↻ 清空表单
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="🔍 搜索书名、作者、ISBN或分类...">
+                    <select id="categoryFilter" class="btn btn-secondary">
+                        <option value="">所有分类</option>
+                        <option value="小说">小说</option>
+                        <option value="技术">技术</option>
+                        <option value="历史">历史</option>
+                        <option value="科学">科学</option>
+                        <option value="艺术">艺术</option>
+                        <option value="教育">教育</option>
+                        <option value="其他">其他</option>
+                    </select>
+                    <select id="statusFilter" class="btn btn-secondary">
+                        <option value="">所有状态</option>
+                        <option value="available">可借阅</option>
+                        <option value="borrowed">已借出</option>
+                    </select>
+                    <button class="btn btn-danger" id="clearFiltersBtn">清除筛选</button>
+                </div>
+            </div>
+
+            <!-- Books List -->
+            <div class="books-section">
+                <h2>📚 图书列表</h2>
+                <div id="booksContainer" class="books-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚠️ 确认删除</h2>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除这本图书吗？此操作无法撤销。</p>
+                <p id="deleteBookTitle" style="font-weight: bold; margin-top: 10px;"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">确定删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Book Management System JavaScript
+        let books = [];
+        let editingBookId = null;
+        let deleteBookId = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBooks();
+            displayBooks();
+            updateStats();
+            setupEventListeners();
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('bookForm').addEventListener('submit', handleFormSubmit);
+            document.getElementById('clearBtn').addEventListener('click', clearForm);
+            document.getElementById('cancelBtn').addEventListener('click', cancelEdit);
+            document.getElementById('searchInput').addEventListener('input', filterBooks);
+            document.getElementById('categoryFilter').addEventListener('change', filterBooks);
+            document.getElementById('statusFilter').addEventListener('change', filterBooks);
+            document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+        }
+
+        // Load books from localStorage
+        function loadBooks() {
+            const stored = localStorage.getItem('books');
+            if (stored) {
+                books = JSON.parse(stored);
+            } else {
+                // Add sample books for demonstration
+                books = [
+                    {
+                        id: Date.now() + 1,
+                        title: '三体',
+                        author: '刘慈欣',
+                        isbn: '9787536692930',
+                        category: '小说',
+                        publisher: '重庆出版社',
+                        year: 2008,
+                        description: '中国科幻文学里程碑之作，讲述了地球文明与三体文明的信息交流、生死搏杀及两个文明在宇宙中的兴衰历程。',
+                        status: 'available',
+                        addedDate: new Date().toISOString()
+                    },
+                    {
+                        id: Date.now() + 2,
+                        title: 'JavaScript高级程序设计',
+                        author: 'Nicholas C. Zakas',
+                        isbn: '9787115545381',
+                        category: '技术',
+                        publisher: '人民邮电出版社',
+                        year: 2020,
+                        description: '前端开发经典教材，全面介绍了JavaScript的各个方面，包括语言核心、DOM、BOM以及Web APIs。',
+                        status: 'borrowed',
+                        addedDate: new Date().toISOString()
+                    }
+                ];
+                saveBooks();
+            }
+        }
+
+        // Save books to localStorage
+        function saveBooks() {
+            localStorage.setItem('books', JSON.stringify(books));
+        }
+
+        // Handle form submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const bookData = {
+                title: formData.get('title').trim(),
+                author: formData.get('author').trim(),
+                isbn: formData.get('isbn').trim(),
+                category: formData.get('category'),
+                publisher: formData.get('publisher').trim(),
+                year: formData.get('year') ? parseInt(formData.get('year')) : null,
+                description: formData.get('description').trim(),
+                status: formData.get('status')
+            };
+
+            if (editingBookId) {
+                // Update existing book
+                const bookIndex = books.findIndex(b => b.id === editingBookId);
+                if (bookIndex !== -1) {
+                    books[bookIndex] = {
+                        ...books[bookIndex],
+                        ...bookData
+                    };
+                    showNotification('图书信息已更新！', 'success');
+                }
+                editingBookId = null;
+            } else {
+                // Add new book
+                const newBook = {
+                    id: Date.now(),
+                    ...bookData,
+                    addedDate: new Date().toISOString()
+                };
+                books.unshift(newBook);
+                showNotification('图书添加成功！', 'success');
+            }
+
+            saveBooks();
+            displayBooks();
+            updateStats();
+            clearForm();
+        }
+
+        // Display books
+        function displayBooks(booksToDisplay = books) {
+            const container = document.getElementById('booksContainer');
+            
+            if (booksToDisplay.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        <h3>暂无图书</h3>
+                        <p>开始添加您的第一本图书吧！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = booksToDisplay.map(book => `
+                <div class="book-card">
+                    <h3>${escapeHtml(book.title)}</h3>
+                    <div class="book-info">
+                        <strong>作者:</strong> ${escapeHtml(book.author)}
+                    </div>
+                    ${book.isbn ? `
+                    <div class="book-info">
+                        <strong>ISBN:</strong> ${escapeHtml(book.isbn)}
+                    </div>
+                    ` : ''}
+                    <div class="book-info">
+                        <strong>分类:</strong> ${escapeHtml(book.category)}
+                    </div>
+                    ${book.publisher ? `
+                    <div class="book-info">
+                        <strong>出版社:</strong> ${escapeHtml(book.publisher)}
+                    </div>
+                    ` : ''}
+                    ${book.year ? `
+                    <div class="book-info">
+                        <strong>年份:</strong> ${book.year}
+                    </div>
+                    ` : ''}
+                    ${book.description ? `
+                    <div class="book-description">
+                        ${escapeHtml(book.description)}
+                    </div>
+                    ` : ''}
+                    <div>
+                        <span class="book-status ${book.status === 'available' ? 'status-available' : 'status-borrowed'}">
+                            ${book.status === 'available' ? '✓ 可借阅' : '○ 已借出'}
+                        </span>
+                    </div>
+                    <div class="book-actions">
+                        <button class="btn btn-warning btn-small" onclick="editBook(${book.id})">
+                            ✎ 编辑
+                        </button>
+                        <button class="btn ${book.status === 'available' ? 'btn-secondary' : 'btn-success'} btn-small" onclick="toggleStatus(${book.id})">
+                            ${book.status === 'available' ? '借出' : '归还'}
+                        </button>
+                        <button class="btn btn-danger btn-small" onclick="openDeleteModal(${book.id})">
+                            ✕ 删除
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalBooks').textContent = books.length;
+            document.getElementById('availableBooks').textContent = books.filter(b => b.status === 'available').length;
+            document.getElementById('borrowedBooks').textContent = books.filter(b => b.status === 'borrowed').length;
+        }
+
+        // Edit book
+        function editBook(id) {
+            const book = books.find(b => b.id === id);
+            if (!book) return;
+
+            editingBookId = id;
+            
+            // Populate form
+            document.getElementById('bookTitle').value = book.title;
+            document.getElementById('bookAuthor').value = book.author;
+            document.getElementById('bookISBN').value = book.isbn || '';
+            document.getElementById('bookCategory').value = book.category;
+            document.getElementById('bookPublisher').value = book.publisher || '';
+            document.getElementById('bookYear').value = book.year || '';
+            document.getElementById('bookDescription').value = book.description || '';
+            document.getElementById('bookStatus').value = book.status;
+
+            // Update form UI
+            document.getElementById('formTitle').textContent = '✎ 编辑图书';
+            document.getElementById('submitBtn').textContent = '✓ 保存更改';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+
+            // Scroll to form
+            document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Cancel edit
+        function cancelEdit() {
+            editingBookId = null;
+            clearForm();
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('bookForm').reset();
+            document.getElementById('formTitle').textContent = '📖 添加新书';
+            document.getElementById('submitBtn').textContent = '✓ 添加图书';
+            document.getElementById('cancelBtn').style.display = 'none';
+            editingBookId = null;
+        }
+
+        // Toggle book status
+        function toggleStatus(id) {
+            const book = books.find(b => b.id === id);
+            if (book) {
+                book.status = book.status === 'available' ? 'borrowed' : 'available';
+                saveBooks();
+                displayBooks();
+                updateStats();
+                showNotification(`图书已${book.status === 'borrowed' ? '借出' : '归还'}`, 'success');
+            }
+        }
+
+        // Open delete modal
+        function openDeleteModal(id) {
+            deleteBookId = id;
+            const book = books.find(b => b.id === id);
+            if (book) {
+                document.getElementById('deleteBookTitle').textContent = `《${book.title}》 - ${book.author}`;
+                document.getElementById('deleteModal').style.display = 'block';
+            }
+        }
+
+        // Close delete modal
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+            deleteBookId = null;
+        }
+
+        // Confirm delete
+        function confirmDelete() {
+            if (deleteBookId) {
+                books = books.filter(b => b.id !== deleteBookId);
+                saveBooks();
+                displayBooks();
+                updateStats();
+                showNotification('图书已删除', 'info');
+                closeDeleteModal();
+            }
+        }
+
+        // Filter books
+        function filterBooks() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            let filtered = books;
+
+            // Apply search filter
+            if (searchTerm) {
+                filtered = filtered.filter(book => 
+                    book.title.toLowerCase().includes(searchTerm) ||
+                    book.author.toLowerCase().includes(searchTerm) ||
+                    (book.isbn && book.isbn.toLowerCase().includes(searchTerm)) ||
+                    book.category.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // Apply category filter
+            if (categoryFilter) {
+                filtered = filtered.filter(book => book.category === categoryFilter);
+            }
+
+            // Apply status filter
+            if (statusFilter) {
+                filtered = filtered.filter(book => book.status === statusFilter);
+            }
+
+            displayBooks(filtered);
+        }
+
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            displayBooks();
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('deleteModal');
+            if (event.target === modal) {
+                closeDeleteModal();
+            }
+        }
+    </script>
+</body>
+</html>
