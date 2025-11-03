@@ -595,7 +595,12 @@
         function loadBooks() {
             const stored = localStorage.getItem('books');
             if (stored) {
-                books = JSON.parse(stored);
+                try {
+                    books = JSON.parse(stored);
+                } catch (e) {
+                    console.error('Error parsing stored books:', e);
+                    books = [];
+                }
             } else {
                 // Add sample books for demonstration
                 books = [
@@ -661,9 +666,9 @@
                 }
                 editingBookId = null;
             } else {
-                // Add new book
+                // Add new book - use timestamp with random component to avoid collisions
                 const newBook = {
-                    id: Date.now(),
+                    id: Date.now() + Math.floor(Math.random() * 1000),
                     ...bookData,
                     addedDate: new Date().toISOString()
                 };
@@ -844,7 +849,7 @@
                 filtered = filtered.filter(book => 
                     book.title.toLowerCase().includes(searchTerm) ||
                     book.author.toLowerCase().includes(searchTerm) ||
-                    (book.isbn && book.isbn.toLowerCase().includes(searchTerm)) ||
+                    (book.isbn && String(book.isbn).toLowerCase().includes(searchTerm)) ||
                     book.category.toLowerCase().includes(searchTerm)
                 );
             }
@@ -871,14 +876,22 @@
         }
 
         // Show notification
+        let notificationTimeout = null;
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
+            
+            // Clear existing timeout to prevent premature hiding
+            if (notificationTimeout) {
+                clearTimeout(notificationTimeout);
+            }
+            
             notification.textContent = message;
             notification.className = `notification ${type}`;
             notification.style.display = 'block';
 
-            setTimeout(() => {
+            notificationTimeout = setTimeout(() => {
                 notification.style.display = 'none';
+                notificationTimeout = null;
             }, 3000);
         }
 
